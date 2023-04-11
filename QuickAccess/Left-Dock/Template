@@ -1,0 +1,84 @@
+#==========================================#
+||               Variables                ||
+#==========================================#
+
+Icon(-N-)NameAndPath=
+Icon(-N-)Text=
+LocationPath(-N-)=[]
+
+Size(-N-)=0
+
+#==========================================#
+||             Size Measuers              ||
+#==========================================#
+
+[MeasureSize(-N-)]
+Measure=Plugin
+Plugin=ActionTimer
+ActionList1=Repeat SizeUp,#IconTimeWaiting#,4
+SizeUp=[!SetOption MeterIcon(-N-) W (Clamp([MeterIcon(-N-):W]+3,25,65))][!SetOption MeterIcon(-N-) X (Clamp([MeterIcon(-N-):X]-1,0,60))][!UpdateMeterGroup Icons][!Redraw]
+ActionList2=Repeat SizeDn,#IconTimeWaiting#,4
+SizeDn=[!SetOption MeterIcon(-N-) W (Clamp([MeterIcon(-N-):W]-3,25,65))][!SetOption MeterIcon(-N-) X (Clamp([MeterIcon(-N-):X]+1,0,60))][!UpdateMeterGroup Icons][!Redraw]
+IgnoreWarnings=1
+DynamicVariables=1
+
+
+#==========================================#
+||           Text Size Measuers           ||
+#==========================================#
+
+[MeasureSizeUpText(-N-)]
+Measure=Plugin
+Plugin=ActionTimer
+Group=Sizers
+ActionList1=ChangeSizeStart|Wait #TextTimeWaiting#|Repeat ChangeSizeCalc,#TextTimeWaiting#,11
+ChangeSizeStart=[!SetVariable Size(-N-) "#Size(-N-)#"][!UpdateMeasureGroup Sizers][!UpdateMeter MeterText(-N-)][!Redraw]
+ChangeSizeCalc=[!SetVariable Size(-N-) "(Clamp(#Size(-N-)#+1,0,20))"][!UpdateMeasureGroup Sizers][!UpdateMeter MeterText(-N-)][!Redraw]
+DynamicVariables=1
+
+[MeasureSizeDownText(-N-)]
+Measure=Plugin
+Plugin=ActionTimer
+Group=Sizers
+ActionList1=ChangeSizeStart|Wait #TextTimeWaiting#|Repeat ChangeSizeCalc,#TextTimeWaiting#,11
+ChangeSizeStart=[!SetVariable Size(-N-) "#Size(-N-)#"][!UpdateMeasureGroup Sizers][!UpdateMeter MeterText(-N-)][!Redraw]
+ChangeSizeCalc=[!SetVariable Size(-N-) "(Clamp(#Size(-N-)#-1,0,20))"][!UpdateMeasureGroup Sizers][!UpdateMeter MeterText(-N-)][!Redraw]
+DynamicVariables=1
+
+
+#==========================================#
+||                 Icon                   ||
+#==========================================#
+
+[MeterIcon(-N-)]
+Meter=Image
+ImageName=#Icon(-N-)NameAndPath#
+X=5
+Y=10R
+W=25
+LeftMouseUpAction="#LocationPath(-N-)#"
+MouseOverAction=[!CommandMeasure MeasureSize(-N-) "Stop 2"][!CommandMeasure MeasureSize(-N-) "Execute 1"][!CommandMeasure MeasureSizeDownText(-N-) "Stop 1"][!CommandMeasure MeasureSizeUpText(-N-) "Execute 1"]
+MouseLeaveAction=[!CommandMeasure MeasureSize(-N-) "Stop 1"][!CommandMeasure MeasureSize(-N-) "Execute 2"][!CommandMeasure MeasureSizeUpText(-N-) "Stop 1"][!CommandMeasure MeasureSizeDownText(-N-) "Execute 1"]
+AntiAlias=1
+PreserveAspectRatio=1
+Group=Icons
+Container=ContainerMeter
+
+
+#==========================================#
+||                 Text                   ||
+#==========================================#
+
+[MeterText(-N-)]
+Meter=String
+StringAlign=CenterCenter
+FontFace=Montserrat Light
+FontSize=#Size(-N-)#
+FontColor=255,255,255
+StringEffect=Shadow
+FontEffectColor=65,65,65,80
+X=0r
+Y=35R
+Text="#Icon(-N-)Text#"
+AntiAlias=1
+DynamicVariables=1
